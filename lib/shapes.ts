@@ -53,6 +53,128 @@ export const createLine = (pointer: PointerEvent) => {
   );
 };
 
+export const createOutlineRect = (pointer: PointerEvent) => {
+  return new fabric.Rect({
+    left: pointer.x,
+    top: pointer.y,
+    width: 100,
+    height: 100,
+    fill: "transparent",
+    stroke: "#aabbcc",
+    strokeWidth: 2,
+    objectId: uuidv4(),
+  } as CustomFabricObject<fabric.Rect>);
+};
+
+export const createOutlineCircle = (pointer: PointerEvent) => {
+  return new fabric.Circle({
+    left: pointer.x,
+    top: pointer.y,
+    radius: 100,
+    fill: "transparent",
+    stroke: "#aabbcc",
+    strokeWidth: 2,
+    objectId: uuidv4(),
+  } as any);
+};
+
+export const createOutlineTriangle = (pointer: PointerEvent) => {
+  return new fabric.Triangle({
+    left: pointer.x,
+    top: pointer.y,
+    width: 100,
+    height: 100,
+    fill: "transparent",
+    stroke: "#aabbcc",
+    strokeWidth: 2,
+    objectId: uuidv4(),
+  } as CustomFabricObject<fabric.Triangle>);
+};
+
+export const buildArrowPath = (
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+): string => {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const len = Math.sqrt(dx * dx + dy * dy);
+  if (len < 1) return `M ${x1} ${y1} L ${x1 + 1} ${y1}`;
+  const headLen = Math.min(20, len * 0.35);
+  const angle = Math.atan2(dy, dx);
+  const spread = Math.PI / 6;
+  const hx1 = x2 - headLen * Math.cos(angle - spread);
+  const hy1 = y2 - headLen * Math.sin(angle - spread);
+  const hx2 = x2 - headLen * Math.cos(angle + spread);
+  const hy2 = y2 - headLen * Math.sin(angle + spread);
+  return `M ${x1} ${y1} L ${x2} ${y2} M ${x2} ${y2} L ${hx1} ${hy1} M ${x2} ${y2} L ${hx2} ${hy2}`;
+};
+
+export const buildDoubleArrowPath = (
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+): string => {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const len = Math.sqrt(dx * dx + dy * dy);
+  if (len < 1) return `M ${x1} ${y1} L ${x1 + 1} ${y1}`;
+  const headLen = Math.min(20, len * 0.35);
+  const angle = Math.atan2(dy, dx);
+  const spread = Math.PI / 6;
+  // forward head
+  const fhx1 = x2 - headLen * Math.cos(angle - spread);
+  const fhy1 = y2 - headLen * Math.sin(angle - spread);
+  const fhx2 = x2 - headLen * Math.cos(angle + spread);
+  const fhy2 = y2 - headLen * Math.sin(angle + spread);
+  // backward head
+  const bhx1 = x1 + headLen * Math.cos(angle - spread);
+  const bhy1 = y1 + headLen * Math.sin(angle - spread);
+  const bhx2 = x1 + headLen * Math.cos(angle + spread);
+  const bhy2 = y1 + headLen * Math.sin(angle + spread);
+  return (
+    `M ${x1} ${y1} L ${x2} ${y2}` +
+    ` M ${x2} ${y2} L ${fhx1} ${fhy1} M ${x2} ${y2} L ${fhx2} ${fhy2}` +
+    ` M ${x1} ${y1} L ${bhx1} ${bhy1} M ${x1} ${y1} L ${bhx2} ${bhy2}`
+  );
+};
+
+export const createArrow = (pointer: PointerEvent) => {
+  const x1 = pointer.x;
+  const y1 = pointer.y;
+  const path = new fabric.Path(buildArrowPath(x1, y1, x1 + 2, y1), {
+    stroke: "#aabbcc",
+    strokeWidth: 2,
+    fill: "transparent",
+    strokeLineCap: "round",
+    strokeLineJoin: "round",
+    objectId: uuidv4(),
+  } as any) as any;
+  path._arrowX1 = x1;
+  path._arrowY1 = y1;
+  path.subType = "arrow";
+  return path;
+};
+
+export const createDoubleArrow = (pointer: PointerEvent) => {
+  const x1 = pointer.x;
+  const y1 = pointer.y;
+  const path = new fabric.Path(buildDoubleArrowPath(x1, y1, x1 + 2, y1), {
+    stroke: "#aabbcc",
+    strokeWidth: 2,
+    fill: "transparent",
+    strokeLineCap: "round",
+    strokeLineJoin: "round",
+    objectId: uuidv4(),
+  } as any) as any;
+  path._arrowX1 = x1;
+  path._arrowY1 = y1;
+  path.subType = "arrow-double";
+  return path;
+};
+
 export const createText = (pointer: PointerEvent, text: string) => {
   return new fabric.IText(text, {
     left: pointer.x,
@@ -84,6 +206,21 @@ export const createSpecificShape = (
 
     case "text":
       return createText(pointer, "Tap to Type");
+
+    case "rect-outline":
+      return createOutlineRect(pointer);
+
+    case "circle-outline":
+      return createOutlineCircle(pointer);
+
+    case "triangle-outline":
+      return createOutlineTriangle(pointer);
+
+    case "arrow":
+      return createArrow(pointer);
+
+    case "arrow-double":
+      return createDoubleArrow(pointer);
 
     default:
       return null;

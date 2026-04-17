@@ -12,7 +12,7 @@ import {
   RenderCanvas,
 } from "@/types/type";
 import { defaultNavElement } from "@/constants";
-import { createSpecificShape } from "./shapes";
+import { buildArrowPath, buildDoubleArrowPath, createSpecificShape } from "./shapes";
 
 // initialize fabric canvas
 export const initializeFabric = ({
@@ -149,6 +149,56 @@ export const handleCanvaseMouseMove = ({
         y2: pointer.y,
       });
       break;
+
+    case "rect-outline":
+      shapeRef.current?.set({
+        width: pointer.x - (shapeRef.current?.left || 0),
+        height: pointer.y - (shapeRef.current?.top || 0),
+      });
+      break;
+
+    case "circle-outline":
+      shapeRef.current?.set({
+        radius: Math.abs(pointer.x - (shapeRef.current?.left || 0)) / 2,
+      });
+      break;
+
+    case "triangle-outline":
+      shapeRef.current?.set({
+        width: pointer.x - (shapeRef.current?.left || 0),
+        height: pointer.y - (shapeRef.current?.top || 0),
+      });
+      break;
+
+    case "arrow":
+    case "arrow-double": {
+      const cur = shapeRef.current as any;
+      if (!cur || cur._arrowX1 === undefined) break;
+      const x1: number = cur._arrowX1;
+      const y1: number = cur._arrowY1;
+      const objectId = cur.objectId;
+      const stroke = cur.stroke || "#aabbcc";
+      const subType: string = cur.subType;
+      canvas.remove(cur);
+      const pathStr =
+        subType === "arrow-double"
+          ? buildDoubleArrowPath(x1, y1, pointer.x, pointer.y)
+          : buildArrowPath(x1, y1, pointer.x, pointer.y);
+      const newPath = new fabric.Path(pathStr, {
+        stroke,
+        strokeWidth: 2,
+        fill: "transparent",
+        strokeLineCap: "round",
+        strokeLineJoin: "round",
+        objectId,
+      } as any) as any;
+      newPath._arrowX1 = x1;
+      newPath._arrowY1 = y1;
+      newPath.subType = subType;
+      shapeRef.current = newPath;
+      canvas.add(newPath);
+      break;
+    }
 
     case "image":
       shapeRef.current?.set({
@@ -361,6 +411,11 @@ export const renderCanvas = ({
           // if element is active, keep it in active state so that it can be edited further
           if (activeObjectRef.current?.objectId === objectId) {
             fabricRef.current?.setActiveObject(enlivenedObj);
+          }
+
+          // restore custom subType (arrows, outline shapes) lost during serialization
+          if (objectData.subType) {
+            (enlivenedObj as any).subType = objectData.subType;
           }
 
           // add object to canvas

@@ -90,6 +90,36 @@ export const getShapeInfo = (shapeType: string) => {
         name: "Free Drawing",
       };
 
+    case "rect-outline":
+      return {
+        icon: "/assets/rect-outline.svg",
+        name: "Rect Outline",
+      };
+
+    case "circle-outline":
+      return {
+        icon: "/assets/circle-outline.svg",
+        name: "Circle Outline",
+      };
+
+    case "triangle-outline":
+      return {
+        icon: "/assets/triangle-outline.svg",
+        name: "Triangle Outline",
+      };
+
+    case "arrow":
+      return {
+        icon: "/assets/arrow.svg",
+        name: "Arrow",
+      };
+
+    case "arrow-double":
+      return {
+        icon: "/assets/arrow-double.svg",
+        name: "Double Arrow",
+      };
+
     default:
       return {
         icon: "/assets/rectangle.svg",

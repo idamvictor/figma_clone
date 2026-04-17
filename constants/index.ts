@@ -22,6 +22,31 @@ export const shapeElements = [
     value: "line",
   },
   {
+    icon: "/assets/rect-outline.svg",
+    name: "Rect Outline",
+    value: "rect-outline",
+  },
+  {
+    icon: "/assets/circle-outline.svg",
+    name: "Circle Outline",
+    value: "circle-outline",
+  },
+  {
+    icon: "/assets/triangle-outline.svg",
+    name: "Triangle Outline",
+    value: "triangle-outline",
+  },
+  {
+    icon: "/assets/arrow.svg",
+    name: "Arrow",
+    value: "arrow",
+  },
+  {
+    icon: "/assets/arrow-double.svg",
+    name: "Double Arrow",
+    value: "arrow-double",
+  },
+  {
     icon: "/assets/image.svg",
     name: "Image",
     value: "image",

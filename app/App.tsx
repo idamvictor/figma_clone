@@ -87,6 +87,7 @@ const Home = () => {
     const { objectId } = object;
     const shapeData = object.toJSON();
     shapeData.objectId = objectId;
+    if ((object as any).subType) shapeData.subType = (object as any).subType;
     const canvasObjects = storage.get("canvasObjects");
     canvasObjects.set(objectId, shapeData);
   }, []);
@@ -98,8 +99,9 @@ const Home = () => {
       if (!object) return;
       const obj = object as any;
       if (!obj.objectId) return;
-      const shapeData = object.toJSON();
+      const shapeData = object.toJSON() as any;
       shapeData.objectId = obj.objectId;
+      if (obj.subType) shapeData.subType = obj.subType;
       canvasStore.setShapeSilent(obj.objectId, shapeData);
     },
     []
