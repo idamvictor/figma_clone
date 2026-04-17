@@ -46,6 +46,8 @@ const Home = () => {
     icon: "",
   });
 
+  const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null);
+
   const [elementAttributes, setElementAttributes] = useState<Attributes>({
     width: "",
     height: "",
@@ -64,6 +66,21 @@ const Home = () => {
   const deleteAllShapes = useCallback(() => {
     canvasStore.clearShapes();
   }, []);
+
+  const handleLayerSelect = useCallback((objectId: string) => {
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+    const target = canvas.getObjects().find((obj: any) => obj.objectId === objectId);
+    if (!target) return;
+    canvas.setActiveObject(target);
+    canvas.requestRenderAll();
+    handleCanvasSelectionCreated({
+      options: { selected: [target] } as any,
+      isEditingRef,
+      setElementAttributes,
+    });
+    setSelectedObjectId(objectId);
+  }, [isEditingRef]);
 
   const syncShapeInStorage = useMutation(({ storage }, object) => {
     if (!object) return;
@@ -177,6 +194,22 @@ const Home = () => {
         isEditingRef,
         setElementAttributes,
       });
+      const selected = options?.selected?.[0] as any;
+      setSelectedObjectId(selected?.objectId || null);
+    });
+
+    canvas.on("selection:updated", (options) => {
+      handleCanvasSelectionCreated({
+        options,
+        isEditingRef,
+        setElementAttributes,
+      });
+      const selected = options?.selected?.[0] as any;
+      setSelectedObjectId(selected?.objectId || null);
+    });
+
+    canvas.on("selection:cleared", () => {
+      setSelectedObjectId(null);
     });
 
     canvas.on("object:scaling", (options) => {
@@ -249,7 +282,11 @@ const Home = () => {
       />
 
       <section className='flex h-full flex-row'>
-        <LeftSidebar allShapes={Array.from(canvasObjects)} />
+        <LeftSidebar
+          allShapes={Array.from(canvasObjects)}
+          selectedObjectId={selectedObjectId}
+          handleLayerSelect={handleLayerSelect}
+        />
 
         <Live canvasRef={canvasRef} undo={undo} redo={redo} />
 
@@ -259,7 +296,7 @@ const Home = () => {
           fabricRef={fabricRef}
           isEditingRef={isEditingRef}
           activeObjectRef={activeObjectRef}
-          syncShapeInStorage={syncShapeInStorage}
+          syncShapeInStorage={syncShapeInStorageSilent}
         />
       </section>
     </main>

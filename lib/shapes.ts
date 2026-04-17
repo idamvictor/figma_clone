@@ -154,7 +154,9 @@ export const modifyShape = ({
     selectedElement.set(property as keyof object, value);
   }
 
-  // set selectedElement to activeObjectRef
+  // re-render immediately so the change is visible without waiting for storage sync
+  canvas.requestRenderAll();
+
   activeObjectRef.current = selectedElement;
 
   syncShapeInStorage(selectedElement);
