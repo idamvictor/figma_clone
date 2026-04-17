@@ -286,6 +286,8 @@ export const modifyShape = ({
   } else if (property === "height") {
     selectedElement.set("scaleY", 1);
     selectedElement.set("height", value);
+  } else if (property === "opacity") {
+    selectedElement.set("opacity", Number(value) / 100);
   } else {
     if (selectedElement[property as keyof object] === value) return;
     selectedElement.set(property as keyof object, value);

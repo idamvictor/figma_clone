@@ -18,6 +18,7 @@ export type Attributes = {
   fontWeight: string;
   fill: string;
   stroke: string;
+  opacity: string;
 };
 
 export type ActiveElement = {

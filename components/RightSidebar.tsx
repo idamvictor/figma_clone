@@ -63,6 +63,7 @@ const RightSidebar = ({
           placeholder="color"
           attributeType="fill"
           handleInputChange={handleInputChange}
+          opacity={elementAttributes.opacity}
         />
 
         <Color

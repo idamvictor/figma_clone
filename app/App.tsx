@@ -56,6 +56,7 @@ const Home = () => {
     fontWeight: "",
     fill: "#aabbcc",
     stroke: "#aabbcc",
+    opacity: "100",
   });
 
   const deleteShapeFromStorage = useMutation(({ storage }, shapeId) => {
