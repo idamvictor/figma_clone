@@ -282,6 +282,8 @@ const Home = () => {
           });
         }}
         handleActiveElement={handleActiveElement}
+        undo={undo}
+        redo={redo}
       />
 
       <section className='flex h-full flex-row'>
