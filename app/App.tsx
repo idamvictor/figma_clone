@@ -83,6 +83,17 @@ const Home = () => {
     setSelectedObjectId(objectId);
   }, [isEditingRef]);
 
+  const handleLayerReorder = useCallback((orderedIds: string[]) => {
+    canvasStore.reorderShapes(orderedIds);
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+    orderedIds.forEach((id, index) => {
+      const obj = canvas.getObjects().find((o: any) => o.objectId === id);
+      if (obj) canvas.moveTo(obj, index);
+    });
+    canvas.requestRenderAll();
+  }, [fabricRef]);
+
   const handleLayerDelete = useCallback((objectId: string) => {
     const canvas = fabricRef.current;
     if (!canvas) return;
@@ -305,6 +316,7 @@ const Home = () => {
           selectedObjectId={selectedObjectId}
           handleLayerSelect={handleLayerSelect}
           handleLayerDelete={handleLayerDelete}
+          handleLayerReorder={handleLayerReorder}
         />
 
         <Live canvasRef={canvasRef} undo={undo} redo={redo} />

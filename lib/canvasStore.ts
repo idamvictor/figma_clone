@@ -101,6 +101,18 @@ export function clearShapes() {
   notify();
 }
 
+export function reorderShapes(orderedIds: string[]) {
+  const next = new Map<string, any>();
+  orderedIds.forEach((id) => {
+    const shape = state.canvasObjects.get(id);
+    if (shape) next.set(id, shape);
+  });
+  state.canvasObjects = next;
+  saveToStorage(state.canvasObjects);
+  pushHistory();
+  notify();
+}
+
 export function undo() {
   if (state.historyIndex <= 0) return;
   state.historyIndex--;

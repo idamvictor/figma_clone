@@ -67,6 +67,7 @@ export type LeftSidebarProps = {
   selectedObjectId: string | null;
   handleLayerSelect: (objectId: string) => void;
   handleLayerDelete: (objectId: string) => void;
+  handleLayerReorder: (orderedIds: string[]) => void;
 };
 
 export type NavbarProps = {
