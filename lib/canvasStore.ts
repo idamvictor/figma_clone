@@ -77,21 +77,25 @@ export function setShapeSilent(id: string, shape: any) {
 
 // Full update: saves, pushes a history snapshot, and notifies React subscribers.
 export function setShape(id: string, shape: any) {
-  state.canvasObjects.set(id, shape);
+  const next = new Map(state.canvasObjects);
+  next.set(id, shape);
+  state.canvasObjects = next;
   saveToStorage(state.canvasObjects);
   pushHistory();
   notify();
 }
 
 export function deleteShape(id: string) {
-  state.canvasObjects.delete(id);
+  const next = new Map(state.canvasObjects);
+  next.delete(id);
+  state.canvasObjects = next;
   saveToStorage(state.canvasObjects);
   pushHistory();
   notify();
 }
 
 export function clearShapes() {
-  state.canvasObjects.clear();
+  state.canvasObjects = new Map();
   saveToStorage(state.canvasObjects);
   pushHistory();
   notify();

@@ -62,6 +62,13 @@ export type RightSidebarProps = {
   syncShapeInStorage: (obj: any) => void;
 };
 
+export type LeftSidebarProps = {
+  allShapes: Array<any>;
+  selectedObjectId: string | null;
+  handleLayerSelect: (objectId: string) => void;
+  handleLayerDelete: (objectId: string) => void;
+};
+
 export type NavbarProps = {
   activeElement: ActiveElement;
   imageInputRef: React.MutableRefObject<HTMLInputElement | null>;

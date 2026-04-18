@@ -83,6 +83,19 @@ const Home = () => {
     setSelectedObjectId(objectId);
   }, [isEditingRef]);
 
+  const handleLayerDelete = useCallback((objectId: string) => {
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+    const obj = canvas.getObjects().find((o: any) => o.objectId === objectId);
+    if (obj) {
+      canvas.remove(obj);
+      canvas.discardActiveObject();
+      canvas.requestRenderAll();
+    }
+    deleteShapeFromStorage(objectId);
+    setSelectedObjectId((prev: string | null) => (prev === objectId ? null : prev));
+  }, [fabricRef, deleteShapeFromStorage]);
+
   const syncShapeInStorage = useMutation(({ storage }, object) => {
     if (!object) return;
     const { objectId } = object;
@@ -291,6 +304,7 @@ const Home = () => {
           allShapes={Array.from(canvasObjects)}
           selectedObjectId={selectedObjectId}
           handleLayerSelect={handleLayerSelect}
+          handleLayerDelete={handleLayerDelete}
         />
 
         <Live canvasRef={canvasRef} undo={undo} redo={redo} />

@@ -9,9 +9,10 @@ type Props = {
   allShapes: Array<any>;
   selectedObjectId: string | null;
   handleLayerSelect: (objectId: string) => void;
+  handleLayerDelete: (objectId: string) => void;
 };
 
-const LeftSidebar = ({ allShapes, selectedObjectId, handleLayerSelect }: Props) => {
+const LeftSidebar = ({ allShapes, selectedObjectId, handleLayerSelect, handleLayerDelete }: Props) => {
   const memoizedShapes = useMemo(
     () => (
       <section className="flex flex-col border-t border-primary-grey-200 bg-primary-black text-primary-grey-300 min-w-[227px] sticky left-0 h-full max-sm:hidden select-none overflow-y-auto pb-20">
@@ -36,14 +37,21 @@ const LeftSidebar = ({ allShapes, selectedObjectId, handleLayerSelect }: Props) 
                   height={16}
                   className={isActive ? "invert" : "group-hover:invert"}
                 />
-                <h3 className='text-sm font-semibold capitalize'>{info.name}</h3>
+                <h3 className='text-sm font-semibold capitalize flex-1'>{info.name}</h3>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleLayerDelete(shape[1]?.objectId); }}
+                  className="opacity-0 group-hover:opacity-100 pr-1 text-xs hover:text-red-400 transition-opacity"
+                  title="Delete layer"
+                >
+                  ✕
+                </button>
               </div>
             );
           })}
         </div>
       </section>
     ),
-    [allShapes?.length, selectedObjectId]
+    [allShapes?.length, selectedObjectId, handleLayerDelete]
   );
 
   return memoizedShapes;
