@@ -2,6 +2,7 @@ import { fabric } from "fabric";
 import { v4 as uuidv4 } from "uuid";
 
 import { CustomFabricObject } from "@/types/type";
+import { zoomIn, zoomOut, zoomTo100, zoomToFit } from "@/lib/canvas";
 
 export const handleCopy = (canvas: fabric.Canvas) => {
   const activeObjects = canvas.getActiveObjects();
@@ -93,38 +94,17 @@ export const handleKeyDown = ({
   syncShapeInStorage: (shape: fabric.Object) => void;
   deleteShapeFromStorage: (id: string) => void;
 }) => {
-  // Check if the key pressed is ctrl/cmd + c (copy)
-  if ((e?.ctrlKey || e?.metaKey) && e.keyCode === 67) {
-    handleCopy(canvas);
-  }
+  const ctrl = e.ctrlKey || e.metaKey;
 
-  // Check if the key pressed is ctrl/cmd + v (paste)
-  if ((e?.ctrlKey || e?.metaKey) && e.keyCode === 86) {
-    handlePaste(canvas, syncShapeInStorage);
-  }
+  if (ctrl && e.key === "c") handleCopy(canvas);
+  if (ctrl && e.key === "v") handlePaste(canvas, syncShapeInStorage);
+  if (ctrl && e.key === "x") { handleCopy(canvas); handleDelete(canvas, deleteShapeFromStorage); }
+  if (ctrl && e.key === "z") undo();
+  if (ctrl && e.key === "y") redo();
 
-  // Check if the key pressed is delete/backspace (delete)
-  // if (e.keyCode === 8 || e.keyCode === 46) {
-  //   handleDelete(canvas, deleteShapeFromStorage);
-  // }
-
-  // check if the key pressed is ctrl/cmd + x (cut)
-  if ((e?.ctrlKey || e?.metaKey) && e.keyCode === 88) {
-    handleCopy(canvas);
-    handleDelete(canvas, deleteShapeFromStorage);
-  }
-
-  // check if the key pressed is ctrl/cmd + z (undo)
-  if ((e?.ctrlKey || e?.metaKey) && e.keyCode === 90) {
-    undo();
-  }
-
-  // check if the key pressed is ctrl/cmd + y (redo)
-  if ((e?.ctrlKey || e?.metaKey) && e.keyCode === 89) {
-    redo();
-  }
-
-  if (e.keyCode === 191 && !e.shiftKey) {
-    e.preventDefault();
-  }
+  // zoom shortcuts
+  if (ctrl && (e.key === "=" || e.key === "+")) { e.preventDefault(); zoomIn(canvas); }
+  if (ctrl && e.key === "-") { e.preventDefault(); zoomOut(canvas); }
+  if (ctrl && e.key === "1") { e.preventDefault(); zoomTo100(canvas); }
+  if (ctrl && (e.key === "0" || (e.shiftKey && e.key === "H"))) { e.preventDefault(); zoomToFit(canvas); }
 };

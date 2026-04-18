@@ -39,6 +39,9 @@ const Home = () => {
   const activeObjectRef = useRef<fabric.Object | null>(null);
   const isEditingRef = useRef(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const isPanningRef = useRef(false);
+  const lastPanPointRef = useRef<{ x: number; y: number } | null>(null);
+  const isSpaceDownRef = useRef(false);
 
   const [activeElement, setActiveElement] = useState<ActiveElement>({
     name: "",
@@ -165,6 +168,14 @@ const Home = () => {
     const canvas = initializeFabric({ canvasRef, fabricRef });
 
     canvas.on("mouse:down", (options) => {
+      const e = options.e as MouseEvent;
+      if (isSpaceDownRef.current || e.button === 1) {
+        isPanningRef.current = true;
+        lastPanPointRef.current = { x: e.clientX, y: e.clientY };
+        canvas.setCursor(isSpaceDownRef.current ? "grabbing" : "all-scroll");
+        canvas.selection = false;
+        return;
+      }
       handleCanvasMouseDown({
         options,
         canvas,
@@ -175,6 +186,18 @@ const Home = () => {
     });
 
     canvas.on("mouse:move", (options) => {
+      if (isPanningRef.current && lastPanPointRef.current) {
+        const e = options.e as MouseEvent;
+        canvas.relativePan(
+          new fabric.Point(
+            e.clientX - lastPanPointRef.current.x,
+            e.clientY - lastPanPointRef.current.y
+          )
+        );
+        lastPanPointRef.current = { x: e.clientX, y: e.clientY };
+        canvas.requestRenderAll();
+        return;
+      }
       handleCanvaseMouseMove({
         options,
         canvas,
@@ -186,6 +209,13 @@ const Home = () => {
     });
 
     canvas.on("mouse:up", () => {
+      if (isPanningRef.current) {
+        isPanningRef.current = false;
+        lastPanPointRef.current = null;
+        canvas.selection = true;
+        canvas.setCursor(isSpaceDownRef.current ? "grab" : "default");
+        return;
+      }
       handleCanvasMouseUp({
         canvas,
         isDrawing,
@@ -265,8 +295,33 @@ const Home = () => {
       })
     );
 
+    const onSpaceDown = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (e.code === "Space" && !isSpaceDownRef.current) {
+        isSpaceDownRef.current = true;
+        canvas.defaultCursor = "grab";
+        canvas.hoverCursor = "grab";
+        canvas.setCursor("grab");
+        e.preventDefault();
+      }
+    };
+    const onSpaceUp = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        isSpaceDownRef.current = false;
+        isPanningRef.current = false;
+        canvas.defaultCursor = "default";
+        canvas.hoverCursor = "move";
+        canvas.setCursor("default");
+      }
+    };
+    document.addEventListener("keydown", onSpaceDown);
+    document.addEventListener("keyup", onSpaceUp);
+
     return () => {
       canvas.dispose();
+      document.removeEventListener("keydown", onSpaceDown);
+      document.removeEventListener("keyup", onSpaceUp);
       window.removeEventListener("resize", () => {
         handleResize({ canvas: null });
       });

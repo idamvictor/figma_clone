@@ -450,7 +450,7 @@ export const handleResize = ({ canvas }: { canvas: fabric.Canvas | null }) => {
   });
 };
 
-// zoom canvas on mouse scroll
+// Ctrl+scroll → zoom toward cursor; Shift+scroll → pan horizontal; plain scroll → pan vertical
 export const handleCanvasZoom = ({
   options,
   canvas,
@@ -458,21 +458,66 @@ export const handleCanvasZoom = ({
   options: fabric.IEvent & { e: WheelEvent };
   canvas: fabric.Canvas;
 }) => {
-  const delta = options.e?.deltaY;
-  let zoom = canvas.getZoom();
+  const e = options.e;
 
-  // allow zooming to min 20% and max 100%
-  const minZoom = 0.2;
-  const maxZoom = 1;
-  const zoomStep = 0.001;
+  if (e.ctrlKey) {
+    let zoom = canvas.getZoom();
+    zoom *= e.deltaY > 0 ? 0.9 : 1.1;
+    zoom = Math.min(Math.max(0.1, zoom), 20);
+    canvas.zoomToPoint({ x: e.offsetX, y: e.offsetY }, zoom);
+  } else {
+    // Pan — browsers move scroll amount into deltaX when Shift is held,
+    // so reading both axes handles mouse + trackpad + Shift+scroll correctly.
+    canvas.relativePan(new fabric.Point(-e.deltaX * 0.5, -e.deltaY * 0.5));
+  }
 
-  // calculate zoom based on mouse scroll wheel with min and max zoom
-  zoom = Math.min(Math.max(minZoom, zoom + delta * zoomStep), maxZoom);
+  e.preventDefault();
+  e.stopPropagation();
+};
 
-  // set zoom to canvas
-  // zoomToPoint: http://fabricjs.com/docs/fabric.Canvas.html#zoomToPoint
-  canvas.zoomToPoint({ x: options.e.offsetX, y: options.e.offsetY }, zoom);
+export const zoomIn = (canvas: fabric.Canvas) => {
+  const center = canvas.getCenter();
+  const zoom = Math.min(canvas.getZoom() * 1.1, 20);
+  canvas.zoomToPoint(new fabric.Point(center.left, center.top), zoom);
+  canvas.requestRenderAll();
+};
 
-  options.e.preventDefault();
-  options.e.stopPropagation();
+export const zoomOut = (canvas: fabric.Canvas) => {
+  const center = canvas.getCenter();
+  const zoom = Math.max(canvas.getZoom() / 1.1, 0.1);
+  canvas.zoomToPoint(new fabric.Point(center.left, center.top), zoom);
+  canvas.requestRenderAll();
+};
+
+export const zoomTo100 = (canvas: fabric.Canvas) => {
+  canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+  canvas.requestRenderAll();
+};
+
+export const zoomToFit = (canvas: fabric.Canvas) => {
+  const objects = canvas.getObjects();
+  if (!objects.length) {
+    canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+    canvas.requestRenderAll();
+    return;
+  }
+
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  objects.forEach((obj) => {
+    const b = obj.getBoundingRect(true);
+    minX = Math.min(minX, b.left);
+    minY = Math.min(minY, b.top);
+    maxX = Math.max(maxX, b.left + b.width);
+    maxY = Math.max(maxY, b.top + b.height);
+  });
+
+  const padding = 40;
+  const zoom = Math.min(
+    canvas.width! / (maxX - minX + padding * 2),
+    canvas.height! / (maxY - minY + padding * 2),
+    20
+  );
+  canvas.setZoom(zoom);
+  canvas.absolutePan(new fabric.Point((minX - padding) * zoom, (minY - padding) * zoom));
+  canvas.requestRenderAll();
 };
