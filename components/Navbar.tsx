@@ -27,10 +27,10 @@ const Navbar = ({
       value.some((val) => val?.value === activeElement?.value));
 
   // Split navElements into logical groups
-  // Group 1: selection + drawing tools (Select, Shapes, Text)
-  const drawingTools = navElements.slice(0, 3);
+  // Group 1: selection + drawing tools (Select, Shapes, Text, Image)
+  const drawingTools = navElements.slice(0, 4);
   // Group 2: destructive actions (Delete, Reset)
-  const actionTools = navElements.slice(3);
+  const actionTools = navElements.slice(4);
 
   const renderItem = (item: ActiveElement | any) => (
     <li

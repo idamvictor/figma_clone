@@ -47,11 +47,6 @@ export const shapeElements = [
     value: "arrow-double",
   },
   {
-    icon: "/assets/image.svg",
-    name: "Image",
-    value: "image",
-  },
-  {
     icon: "/assets/freeform.svg",
     name: "Free Drawing",
     value: "freeform",
@@ -73,6 +68,11 @@ export const navElements = [
     icon: "/assets/text.svg",
     value: "text",
     name: "Text",
+  },
+  {
+    icon: "/assets/image.svg",
+    value: "image",
+    name: "Image",
   },
   {
     icon: "/assets/delete.svg",
