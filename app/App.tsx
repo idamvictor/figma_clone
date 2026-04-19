@@ -347,7 +347,7 @@ const Home = () => {
   }, [canvasObjects]);
 
   return (
-    <main className='h-screen overflow-hidden'>
+    <main className='h-screen overflow-hidden bg-background'>
       <Navbar
         imageInputRef={imageInputRef}
         activeElement={activeElement}
@@ -365,7 +365,7 @@ const Home = () => {
         redo={redo}
       />
 
-      <section className='flex h-full flex-row'>
+      <section className='flex h-full flex-row pt-[56px]'>
         <LeftSidebar
           allShapes={Array.from(canvasObjects)}
           selectedObjectId={selectedObjectId}

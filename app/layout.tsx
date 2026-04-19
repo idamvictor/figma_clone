@@ -19,7 +19,7 @@ const workSans = Work_Sans({
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
   <html lang='en' className={cn("font-sans", inter.variable)}>
-    <body className={`${workSans.className} bg-primary-grey-200`}>
+    <body className={`${workSans.className} bg-background`}>
       <TooltipProvider>{children}</TooltipProvider>
     </body>
   </html>

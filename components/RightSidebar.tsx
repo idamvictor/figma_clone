@@ -36,45 +36,50 @@ const RightSidebar = ({
   // memoize the content of the right sidebar to avoid re-rendering on every mouse actions
   const memoizedContent = useMemo(
     () => (
-      <section className="flex flex-col border-t border-primary-grey-200 bg-primary-black text-primary-grey-300 min-w-[227px] sticky right-0 h-full max-sm:hidden select-none">
-        <h3 className=" px-5 pt-4 text-xs uppercase">Design</h3>
-        <span className="text-xs text-primary-grey-300 mt-3 px-5 border-b border-primary-grey-200 pb-4">
-          Make changes to canvas as you like
-        </span>
+      <section className="flex flex-col border-l bg-background text-muted-foreground w-64 pt-5 h-full max-sm:hidden select-none overflow-y-auto transition-all">
+        <div className="flex flex-col gap-0.5 px-5 py-4 border-b border-border mb-2">
+          <h3 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Design</h3>
+          <p className="text-[11px] text-muted-foreground leading-tight">
+            Adjust object properties below
+          </p>
+        </div>
 
-        <Dimensions
-          isEditingRef={isEditingRef}
-          width={elementAttributes.width}
-          height={elementAttributes.height}
-          handleInputChange={handleInputChange}
-        />
+        <div className="flex flex-col">
+          <Dimensions
+            isEditingRef={isEditingRef}
+            width={elementAttributes.width}
+            height={elementAttributes.height}
+            handleInputChange={handleInputChange}
+          />
 
-        <Text
-          fontFamily={elementAttributes.fontFamily}
-          fontSize={elementAttributes.fontSize}
-          fontWeight={elementAttributes.fontWeight}
-          handleInputChange={handleInputChange}
- 
-        />
+          <Text
+            fontFamily={elementAttributes.fontFamily}
+            fontSize={elementAttributes.fontSize}
+            fontWeight={elementAttributes.fontWeight}
+            handleInputChange={handleInputChange}
+          />
 
-        <Color
-          inputRef={colorInputRef}
-          attribute={elementAttributes.fill}
-          placeholder="color"
-          attributeType="fill"
-          handleInputChange={handleInputChange}
-          opacity={elementAttributes.opacity}
-        />
+          <Color
+            inputRef={colorInputRef}
+            attribute={elementAttributes.fill}
+            placeholder="color"
+            attributeType="fill"
+            handleInputChange={handleInputChange}
+            opacity={elementAttributes.opacity}
+          />
 
-        <Color
-          inputRef={strokeInputRef}
-          attribute={elementAttributes.stroke}
-          placeholder="stroke"
-          attributeType="stroke"
-          handleInputChange={handleInputChange}
-        />
+          <Color
+            inputRef={strokeInputRef}
+            attribute={elementAttributes.stroke}
+            placeholder="stroke"
+            attributeType="stroke"
+            handleInputChange={handleInputChange}
+          />
 
-        <Export />
+          <div className="px-5 py-6 mt-auto border-t border-border">
+            <Export canvas={fabricRef.current} />
+          </div>
+        </div>
       </section>
     ),
     [elementAttributes]

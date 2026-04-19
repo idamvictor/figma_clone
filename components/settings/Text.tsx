@@ -39,28 +39,42 @@ const Text = ({
   fontWeight,
   handleInputChange,
 }: TextProps) => (
-  <div className='flex flex-col gap-3 border-b border-primary-grey-200 px-5 py-3'>
-    <h3 className='text-[10px] uppercase'>Text</h3>
+  <div className='flex flex-col gap-3 border-b border-border px-5 py-4'>
+    <span className='text-[10px] font-semibold uppercase tracking-wider text-muted-foreground'>Text</span>
 
     <div className='flex flex-col gap-3'>
-      {RenderSelect({
-        config: selectConfigs[0],
-        fontSize,
-        fontWeight,
-        fontFamily,
-        handleInputChange,
-      })}
+      <div className="flex flex-col gap-1">
+        <span className="text-[10px] text-muted-foreground/60 ml-0.5">Font Family</span>
+        {RenderSelect({
+          config: selectConfigs[0],
+          fontSize,
+          fontWeight,
+          fontFamily,
+          handleInputChange,
+        })}
+      </div>
 
-      <div className='flex gap-2'>
-        {selectConfigs.slice(1).map((config) =>
-          RenderSelect({
-            config,
+      <div className='grid grid-cols-2 gap-2'>
+         <div className="flex flex-col gap-1">
+          <span className="text-[10px] text-muted-foreground/60 ml-0.5">Size</span>
+          {RenderSelect({
+            config: selectConfigs[1],
             fontSize,
             fontWeight,
             fontFamily,
             handleInputChange,
-          })
-        )}
+          })}
+        </div>
+         <div className="flex flex-col gap-1">
+          <span className="text-[10px] text-muted-foreground/60 ml-0.5">Weight</span>
+          {RenderSelect({
+            config: selectConfigs[2],
+            fontSize,
+            fontWeight,
+            fontFamily,
+            handleInputChange,
+          })}
+        </div>
       </div>
     </div>
   </div>
@@ -96,7 +110,7 @@ const RenderSelect = ({
           : fontWeight
     }
   >
-    <SelectTrigger className='no-ring w-full rounded-sm border border-primary-grey-200'>
+    <SelectTrigger className='no-ring w-full h-8 rounded-md border border-border bg-background px-3 text-xs hover:bg-muted transition-all'>
       <SelectValue
         placeholder={
           config.property === "fontFamily"
@@ -107,12 +121,12 @@ const RenderSelect = ({
         }
       />
     </SelectTrigger>
-    <SelectContent className='border-primary-grey-200 bg-primary-black text-primary-grey-300'>
+    <SelectContent className='border-border bg-background text-foreground'>
       {config.options.map((option) => (
         <SelectItem
           key={option.value}
           value={option.value}
-          className=' hover:bg-primary-green hover:text-primary-black'
+          className='focus:bg-primary focus:text-primary-foreground'
         >
           {option.label}
         </SelectItem>
