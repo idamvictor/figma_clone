@@ -1,7 +1,10 @@
-import { Work_Sans } from "next/font/google";
+import { Work_Sans, Inter } from "next/font/google";
 
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata = {
   title: "Figma Clone",
@@ -15,7 +18,7 @@ const workSans = Work_Sans({
 });
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
-  <html lang='en'>
+  <html lang='en' className={cn("font-sans", inter.variable)}>
     <body className={`${workSans.className} bg-primary-grey-200`}>
       <TooltipProvider>{children}</TooltipProvider>
     </body>
