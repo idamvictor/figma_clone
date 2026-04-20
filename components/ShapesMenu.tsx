@@ -25,14 +25,14 @@ const ShapesMenu = ({
               src={isDropdownElem ? activeElement.icon : item.icon}
               alt={item.name}
               fill
-              className={isDropdownElem ? "" : "invert opacity-80 group-hover:opacity-100"}
+              className={isDropdownElem ? "invert" : "invert opacity-80 group-hover:opacity-100"}
             />
           </div>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="mt-4 flex flex-col gap-0.5 border border-border bg-background p-1.5 text-foreground shadow-xl rounded-lg min-w-[180px]">
-          <div className="px-3 pt-1.5 pb-1 mb-1 border-b border-border">
-            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Shapes</span>
+        <DropdownMenuContent className="mt-4 flex flex-col gap-0.5 border border-black/5 bg-white/80 backdrop-blur-xl p-1.5 text-foreground shadow-2xl rounded-xl min-w-[200px]">
+          <div className="px-3 pt-1.5 pb-1 mb-1 border-b border-black/5">
+            <span className="text-[10px] font-medium uppercase tracking-wider text-black/40">Shapes</span>
           </div>
           {item.value.map((elem) => (
             <div
@@ -40,23 +40,25 @@ const ShapesMenu = ({
               onClick={() => {
                 handleActiveElement(elem);
               }}
-              className={`flex items-center justify-between gap-4 rounded-md px-3 py-2 cursor-pointer transition-all
-                ${activeElement.value === elem?.value ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-muted text-foreground/70 hover:text-foreground"}`}
+              className={`flex items-center justify-between gap-4 rounded-lg px-3 py-2 cursor-pointer transition-all
+                ${activeElement.value === elem?.value 
+                  ? "bg-black/[0.08] text-black shadow-sm border border-black/5" 
+                  : "hover:bg-black/5 text-black/60 hover:text-black"}`}
             >
               <div className="flex items-center gap-3">
-                <div className={`p-1 rounded ${activeElement.value === elem?.value ? "bg-white/20" : "bg-muted"}`}>
+                <div className={`p-1 rounded-md ${activeElement.value === elem?.value ? "bg-black/10" : "bg-black/5"}`}>
                   <Image
                     src={elem?.icon as string}
                     alt={elem?.name as string}
                     width={16}
                     height={16}
-                    className={activeElement.value === elem?.value ? "" : "invert opacity-80"}
+                    className={activeElement.value === elem?.value ? "invert" : "invert opacity-70"}
                   />
                 </div>
                 <p className="text-sm font-medium">{elem?.name}</p>
               </div>
               {activeElement.value === elem?.value && (
-                <div className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />
+                <div className="w-1.5 h-1.5 rounded-full bg-black/80 shadow-[0_0_8px_rgba(0,0,0,0.2)]" />
               )}
             </div>
           ))}
