@@ -392,7 +392,7 @@ const Home = () => {
         redo={redo}
       />
 
-      <section className='flex h-full flex-row'>
+      <section className='flex h-full flex-row pt-[56px]'>
         <LeftSidebar
           allShapes={Array.from(canvasObjects)}
           selectedObjectId={selectedObjectId}
