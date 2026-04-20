@@ -11,11 +11,10 @@ type Props = {
   height: string;
   isEditingRef: React.MutableRefObject<boolean>;
   handleInputChange: (property: string, value: string) => void;
-  disabled?: boolean;
 };
 
-const Dimensions = ({ width, height, isEditingRef, handleInputChange, disabled }: Props) => (
-  <section className={`flex flex-col border-b border-border${disabled ? " opacity-40 pointer-events-none" : ""}`}>
+const Dimensions = ({ width, height, isEditingRef, handleInputChange }: Props) => (
+  <section className='flex flex-col border-b border-border'>
     <div className='flex flex-col gap-3 px-5 py-4'>
       <div className="flex items-center justify-between mb-1">
         <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Dimensions</span>

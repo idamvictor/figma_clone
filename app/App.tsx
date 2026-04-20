@@ -50,9 +50,6 @@ const Home = () => {
   });
 
   const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null);
-  const [selectedElementType, setSelectedElementType] = useState<string | null>(null);
-  const [canvasBackground, setCanvasBackground] = useState<string>("#ffffff");
-  const canvasBackgroundRef = useRef<string>("#ffffff");
 
   const [elementAttributes, setElementAttributes] = useState<Attributes>({
     width: "",
@@ -72,26 +69,6 @@ const Home = () => {
 
   const deleteAllShapes = useCallback(() => {
     canvasStore.clearShapes();
-  }, []);
-
-  const getElementType = (obj: fabric.Object | null): string | null => {
-    if (!obj) return null;
-    const type = (obj as any).type;
-    const subType = (obj as any).subType;
-    if (type === "activeSelection") return "multiple";
-    if (type === "i-text" || type === "text" || type === "textbox") return "text";
-    if (type === "image") return "image";
-    if (type === "line") return "line";
-    if (type === "path" && (subType === "arrow" || subType === "arrow-double")) return "line";
-    return "shape";
-  };
-
-  const handleCanvasColorChange = useCallback((color: string) => {
-    setCanvasBackground(color);
-    canvasBackgroundRef.current = color;
-    fabricRef.current?.setBackgroundColor(color, () => {
-      fabricRef.current?.requestRenderAll();
-    });
   }, []);
 
   const handleLayerSelect = useCallback((objectId: string) => {
@@ -276,7 +253,6 @@ const Home = () => {
       });
       const selected = options?.selected?.[0] as any;
       setSelectedObjectId(selected?.objectId || null);
-      setSelectedElementType(getElementType(selected || null));
     });
 
     canvas.on("selection:updated", (options) => {
@@ -287,13 +263,10 @@ const Home = () => {
       });
       const selected = options?.selected?.[0] as any;
       setSelectedObjectId(selected?.objectId || null);
-      setSelectedElementType(getElementType(selected || null));
     });
 
     canvas.on("selection:cleared", () => {
       setSelectedObjectId(null);
-      setSelectedElementType(null);
-      setElementAttributes((prev) => ({ ...prev, fill: canvasBackgroundRef.current }));
     });
 
     canvas.on("object:scaling", (options) => {
@@ -410,8 +383,6 @@ const Home = () => {
           isEditingRef={isEditingRef}
           activeObjectRef={activeObjectRef}
           syncShapeInStorage={syncShapeInStorageSilent}
-          selectedElementType={selectedElementType}
-          onCanvasColorChange={handleCanvasColorChange}
         />
       </section>
     </main>

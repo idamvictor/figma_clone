@@ -31,7 +31,6 @@ type TextProps = {
   fontSize: string;
   fontWeight: string;
   handleInputChange: (property: string, value: string) => void;
-  disabled?: boolean;
 };
 
 const Text = ({
@@ -39,9 +38,8 @@ const Text = ({
   fontSize,
   fontWeight,
   handleInputChange,
-  disabled,
 }: TextProps) => (
-  <div className={`flex flex-col gap-3 border-b border-border px-5 py-4${disabled ? " opacity-40 pointer-events-none" : ""}`}>
+  <div className='flex flex-col gap-3 border-b border-border px-5 py-4'>
     <span className='text-[10px] font-semibold uppercase tracking-wider text-muted-foreground'>Text</span>
 
     <div className='flex flex-col gap-3'>
