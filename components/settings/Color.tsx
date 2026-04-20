@@ -10,6 +10,7 @@ type Props = {
   attributeType: string;
   handleInputChange: (property: string, value: string) => void;
   opacity?: string;
+  disabled?: boolean;
 };
 
 const Color = ({
@@ -19,6 +20,7 @@ const Color = ({
   attributeType,
   handleInputChange,
   opacity,
+  disabled,
 }: Props) => {
   const [showSlider, setShowSlider] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -35,7 +37,7 @@ const Color = ({
   }, [showSlider]);
 
   return (
-    <div className='flex flex-col gap-3 border-b border-border px-5 py-4'>
+    <div className={`flex flex-col gap-3 border-b border-border px-5 py-4${disabled ? " opacity-40 pointer-events-none" : ""}`}>
       <span className='text-[10px] font-semibold uppercase tracking-wider text-muted-foreground'>{placeholder}</span>
       
       <div className="flex items-center gap-2">

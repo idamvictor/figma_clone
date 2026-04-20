@@ -60,6 +60,8 @@ export type RightSidebarProps = {
   activeObjectRef: React.RefObject<fabric.Object | null>;
   isEditingRef: React.MutableRefObject<boolean>;
   syncShapeInStorage: (obj: any) => void;
+  selectedElementType: string | null;
+  onCanvasColorChange: (color: string) => void;
 };
 
 export type LeftSidebarProps = {
