@@ -20,7 +20,7 @@ import {
   renderCanvas,
 } from "@/lib/canvas";
 import { handleDelete, handleKeyDown } from "@/lib/key-events";
-import { LeftSidebar, Live, Navbar, RightSidebar } from "@/components/index";
+import { LeftSidebar, Live, FloatingToolbar, RightSidebar } from "@/components/index";
 import { handleImageUpload } from "@/lib/shapes";
 import { defaultNavElement } from "@/constants";
 import { ActiveElement, Attributes } from "@/types/type";
@@ -348,7 +348,7 @@ const Home = () => {
 
   return (
     <main className='h-screen overflow-hidden bg-background'>
-      <Navbar
+      <FloatingToolbar
         imageInputRef={imageInputRef}
         activeElement={activeElement}
         handleImageUpload={(e: any) => {
@@ -365,7 +365,7 @@ const Home = () => {
         redo={redo}
       />
 
-      <section className='flex h-full flex-row pt-[56px]'>
+      <section className='flex h-full flex-row'>
         <LeftSidebar
           allShapes={Array.from(canvasObjects)}
           selectedObjectId={selectedObjectId}

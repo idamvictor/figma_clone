@@ -1,19 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import { memo } from "react";
+import { memo, useEffect, useRef, useState } from "react";
+import Draggable from "react-draggable";
 
 import { navElements } from "@/constants";
 import { ActiveElement, NavbarProps } from "@/types/type";
-
-import { Button } from "./ui/button";
 import ShapesMenu from "./ShapesMenu";
+
+const TOOLBAR_WIDTH = 420;
 
 const Divider = () => (
   <li className="mx-2 w-px h-6 self-center bg-border/50" />
 );
 
-const Navbar = ({
+const FloatingToolbar = ({
   activeElement,
   imageInputRef,
   handleImageUpload,
@@ -21,12 +22,25 @@ const Navbar = ({
   undo,
   redo,
 }: NavbarProps) => {
+  const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 20 });
+  const [mounted, setMounted] = useState(false);
+  const nodeRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setPosition({
+      x: Math.max(0, window.innerWidth / 2 - TOOLBAR_WIDTH / 2),
+      y: 20,
+    });
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   const isActive = (value: string | Array<ActiveElement>) =>
     (activeElement && activeElement.value === value) ||
     (Array.isArray(value) &&
       value.some((val) => val?.value === activeElement?.value));
 
-  // Split navElements into logical groups
   const drawingTools = navElements.slice(0, 4);
   const actionTools = navElements.slice(4);
 
@@ -62,55 +76,65 @@ const Navbar = ({
   );
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex select-none items-center justify-between gap-4 bg-background border-b px-5 py-2.5 text-foreground shadow-sm">
-      <div className="flex items-center gap-2">
-        <Image src="/assets/logo.svg" alt="FigPro Logo" width={32} height={32} className="object-contain" />
-        <span className="font-bold text-sm tracking-tight text-foreground/90 max-sm:hidden">FIGPRO</span>
-      </div>
-
-      <ul className="flex flex-row items-center gap-1.5 bg-muted/50 rounded-xl p-1 border border-border/10">
-        {/* Group 1: Selection & drawing tools */}
-        {drawingTools.map(renderItem)}
-
-        <Divider />
-
-        {/* Group 2: History */}
-        <li
-          onClick={undo}
-          title="Undo (Ctrl+Z)"
-          className="group px-3 py-2 flex justify-center items-center hover:bg-muted rounded-lg cursor-pointer transition-all"
-        >
-          <div className="relative w-5 h-5 object-contain">
-            <Image src="/assets/undo.svg" alt="Undo" fill className="invert opacity-80 group-hover:opacity-100 transition-opacity" />
+    <Draggable
+      nodeRef={nodeRef as React.RefObject<HTMLElement>}
+      handle=".toolbar-drag-handle"
+      defaultPosition={position}
+      bounds="body"
+    >
+      <div ref={nodeRef} className="fixed z-100 select-none" style={{ top: 0, left: 0 }}>
+        <nav className="flex items-center gap-1 bg-background border border-border/40 rounded-xl shadow-xl px-2 py-1.5">
+          <div
+            className="toolbar-drag-handle flex items-center px-1.5 py-2 cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground transition-colors"
+            title="Drag to move"
+          >
+            <svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true">
+              <circle cx="2" cy="2"  r="1.5" />
+              <circle cx="8" cy="2"  r="1.5" />
+              <circle cx="2" cy="8"  r="1.5" />
+              <circle cx="8" cy="8"  r="1.5" />
+              <circle cx="2" cy="14" r="1.5" />
+              <circle cx="8" cy="14" r="1.5" />
+            </svg>
           </div>
-        </li>
-        <li
-          onClick={redo}
-          title="Redo (Ctrl+Y)"
-          className="group px-3 py-2 flex justify-center items-center hover:bg-muted rounded-lg cursor-pointer transition-all"
-        >
-          <div className="relative w-5 h-5 object-contain">
-            <Image src="/assets/redo.svg" alt="Redo" fill className="invert opacity-80 group-hover:opacity-100 transition-opacity" />
-          </div>
-        </li>
 
-        <Divider />
+          <div className="w-px h-6 bg-border/50 mx-1" />
 
-        {/* Group 3: Canvas actions */}
-        {actionTools.map(renderItem)}
-      </ul>
+          <ul className="flex flex-row items-center gap-0.5">
+            {drawingTools.map(renderItem)}
 
-      <div className="flex items-center gap-4">
-        {/* We can add profile or share buttons here if needed */}
-        <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-[10px] font-bold text-primary">
-          JD
-        </div>
+            <Divider />
+
+            <li
+              onClick={undo}
+              title="Undo (Ctrl+Z)"
+              className="group px-3 py-2 flex justify-center items-center hover:bg-accent rounded-lg cursor-pointer transition-all"
+            >
+              <div className="relative w-5 h-5 object-contain">
+                <Image src="/assets/undo.svg" alt="Undo" fill className="invert opacity-80 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </li>
+            <li
+              onClick={redo}
+              title="Redo (Ctrl+Y)"
+              className="group px-3 py-2 flex justify-center items-center hover:bg-accent rounded-lg cursor-pointer transition-all"
+            >
+              <div className="relative w-5 h-5 object-contain">
+                <Image src="/assets/redo.svg" alt="Redo" fill className="invert opacity-80 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </li>
+
+            <Divider />
+
+            {actionTools.map(renderItem)}
+          </ul>
+        </nav>
       </div>
-    </nav>
+    </Draggable>
   );
 };
 
 export default memo(
-  Navbar,
+  FloatingToolbar,
   (prevProps, nextProps) => prevProps.activeElement === nextProps.activeElement
 );
