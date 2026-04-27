@@ -1,4 +1,4 @@
-import FloatingToolbar from "./Navbar";
+import FloatingToolbar from "./FloatingToolbar";
 import LeftSidebar from "./LeftSidebar";
 import RightSidebar from "./RightSidebar";
 import Live from "./Live";
